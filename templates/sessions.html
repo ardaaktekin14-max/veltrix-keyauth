@@ -1,1 +1,142 @@
 
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veltrix - Sessions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.lineicons.com/4.0/lineicons.css">
+    <style>body { background: #09090d; } ::-webkit-scrollbar { display: none; }</style>
+</head>
+<body class="text-white font-sans">
+<div class="flex min-h-screen">
+    <aside class="fixed top-0 left-0 z-20 flex flex-col w-64 h-full bg-[#0f0f17] border-r border-gray-800">
+        <div class="flex items-center gap-3 px-4 py-4 border-b border-gray-800">
+            <div class="w-7 h-7 bg-blue-700 rounded-lg flex items-center justify-center text-sm font-black">V</div>
+            <span class="text-white font-bold tracking-widest text-sm">VELTRIX</span>
+        </div>
+        <div class="px-3 py-3 border-b border-gray-800">
+            <div class="bg-[#09090d] border border-gray-800 rounded-lg px-3 py-2 flex justify-between items-center">
+                <span class="text-gray-400 text-xs">{{ admin_name or 'Admin' }}'s Application</span>
+                <span class="text-gray-600 text-xs">▾</span>
+            </div>
+        </div>
+        <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+            <p class="text-xs text-gray-600 uppercase tracking-widest px-2 mb-2">App</p>
+            <a href="/manage" class="flex items-center gap-3 px-2 py-2 rounded-lg text-gray-300 hover:opacity-60 hover:bg-blue-700 text-sm"><i class="lni lni-grid-alt w-4"></i><span>Manage Apps</span></a>
+            <a href="/" class="flex items-center gap-3 px-2 py-2 rounded-lg text-gray-300 hover:opacity-60 hover:bg-blue-700 text-sm"><i class="lni lni-key w-4"></i><span>Licenses</span></a>
+            <a href="/users" class="flex items-center gap-3 px-2 py-2 rounded-lg text-gray-300 hover:opacity-60 hover:bg-blue-700 text-sm"><i class="lni lni-users w-4"></i><span>Users</span></a>
+            <a href="#" class="flex items-center gap-3 px-2 py-2 rounded-lg text-gray-300 hover:opacity-60 hover:bg-blue-700 text-sm"><i class="lni lni-tag w-4"></i><span>Tokens</span></a>
+            <a href="#" class="flex items-center gap-3 px-2 py-2 rounded-lg text-gray-300 hover:opacity-60 hover:bg-blue-700 text-sm"><i class="lni lni-popup w-4"></i><span>Chats</span></a>
+            <a href="/sessions" class="flex items-center gap-3 px-2 py-2 rounded-lg text-white bg-blue-700 bg-opacity-20 text-sm"><i class="lni lni-timer text-blue-500 w-4"></i><span>Sessions</span></a>
+            <a href="/logs" class="flex items-center gap-3 px-2 py-2 rounded-lg text-gray-300 hover:opacity-60 hover:bg-blue-700 text-sm"><i class="lni lni-archive w-4"></i><span>Event Logs</span></a>
+            <a href="#" class="flex items-center gap-3 px-2 py-2 rounded-lg text-gray-300 hover:opacity-60 hover:bg-blue-700 text-sm"><i class="lni lni-files w-4"></i><span>Files</span></a>
+            <a href="/settings" class="flex items-center gap-3 px-2 py-2 rounded-lg text-gray-300 hover:opacity-60 hover:bg-blue-700 text-sm"><i class="lni lni-cog w-4"></i><span>Settings</span></a>
+            <p class="text-xs text-gray-600 uppercase tracking-widest px-2 mb-2 mt-4">Account</p>
+            <a href="/logout" class="flex items-center gap-3 px-2 py-2 rounded-lg text-gray-300 hover:opacity-60 hover:bg-red-700 text-sm"><i class="lni lni-exit w-4"></i><span>Logout</span></a>
+        </nav>
+        <div class="px-3 py-3 border-t border-gray-800">
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-full bg-blue-700 flex items-center justify-center text-xs font-bold flex-shrink-0">{{ admin_name[0] if admin_name else 'A' }}</div>
+                <div class="flex-1 min-w-0">
+                    <div class="text-xs font-semibold text-white truncate">{{ admin_name or 'Admin' }}</div>
+                    <div class="text-xs text-gray-500">Administrator</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <div class="ml-64 flex-1 flex flex-col">
+        <div class="sticky top-0 z-10 bg-[#0f0f17] border-b border-gray-800 px-6 py-3">
+            <nav class="flex items-center gap-2 text-xs text-gray-500">
+                <a href="/manage" class="hover:text-white">Manage Apps</a><span>›</span>
+                <a href="#" class="hover:text-white">{{ admin_name or 'Admin' }}'s Application</a><span>›</span>
+                <span class="text-white">Sessions</span>
+            </nav>
+        </div>
+
+        <div class="p-6 bg-[#09090d] flex-1">
+            <div class="bg-[#0f0f17] rounded-xl p-6">
+                <div class="mb-4">
+                    <h1 class="text-2xl font-semibold text-white">Sessions</h1>
+                    <p class="text-xs text-gray-500 mt-1">All of your active sessions. (Active Users)</p>
+                </div>
+
+                <div class="flex items-center justify-between mb-4">
+                    <input id="searchInput" type="text" placeholder="Search sessions..."
+                        class="bg-[#09090d] border border-gray-800 text-white text-sm rounded-lg px-3 py-2 w-64 outline-none focus:border-blue-700">
+                    <div class="flex gap-2">
+                        <button onclick="location.reload()" class="p-2 bg-[#09090d] border border-gray-800 rounded-lg text-gray-400 hover:text-white">↺</button>
+                        <button class="p-2 bg-[#09090d] border border-gray-800 rounded-lg text-gray-400 hover:text-white">🗑</button>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <button class="text-xs text-gray-500 hover:text-white">Select All</button>
+                </div>
+
+                {% if sessions %}
+                <table id="sessionsTable" class="w-full text-sm text-left text-white">
+                    <thead>
+                        <tr class="border-2 border-gray-800 text-blue-700">
+                            <th class="px-5 py-3">User</th>
+                            <th class="px-5 py-3">License Key</th>
+                            <th class="px-5 py-3">HWID</th>
+                            <th class="px-5 py-3">Expires</th>
+                            <th class="px-5 py-3">Created By</th>
+                            <th class="px-5 py-3">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in sessions %}
+                        <tr class="border-b border-gray-800 hover:bg-[#09090d] transition">
+                            <td class="px-5 py-3">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 rounded-full bg-green-400"></div>
+                                    <span class="text-white">{{ s.note or '—' }}</span>
+                                </div>
+                            </td>
+                            <td class="px-5 py-3">
+                                <span class="font-mono text-xs text-blue-400">{{ s.key[:20] }}...</span>
+                            </td>
+                            <td class="px-5 py-3">
+                                <span class="font-mono text-xs text-gray-500" title="{{ s.hwid }}">{{ s.hwid[:16] }}...</span>
+                            </td>
+                            <td class="px-5 py-3 text-gray-400 text-xs">{{ s.expires }}</td>
+                            <td class="px-5 py-3 text-gray-400 text-xs">{{ s.created_by }}</td>
+                            <td class="px-5 py-3">
+                                <a href="/reset_hwid/{{ s.key }}"
+                                    class="text-xs text-red-400 bg-red-900 bg-opacity-30 border border-red-800 px-2 py-1 rounded hover:opacity-70">
+                                    Kill Session
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="flex justify-between items-center mt-4 text-xs text-gray-600">
+                    <span>Previous</span>
+                    <span>{{ sessions|length }} active sessions</span>
+                    <span>Next</span>
+                </div>
+                {% else %}
+                <div class="text-center py-16">
+                    <div class="text-4xl mb-3 opacity-20">🔴</div>
+                    <p class="text-gray-600 text-sm">No sessions found for this application.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+document.getElementById('searchInput')?.addEventListener('input', function() {
+    const q = this.value.toLowerCase();
+    document.querySelectorAll('#sessionsTable tbody tr').forEach(row => {
+        row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+});
+</script>
+</body>
+</html>
