@@ -4,757 +4,269 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Veltrix Panel</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.lineicons.com/4.0/lineicons.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            background: #0f0f17;
-            color: #c9d1d9;
-            font-family: 'Inter', sans-serif;
-            font-size: 14px;
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* SIDEBAR */
-        .sidebar {
-            width: 200px;
-            background: #0a0a12;
-            border-right: 1px solid #21213a;
-            position: fixed;
-            top: 0; left: 0; bottom: 0;
-            z-index: 200;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-
-        .sidebar-logo {
-            padding: 14px 16px;
-            border-bottom: 1px solid #21213a;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .logo-icon {
-            width: 26px; height: 26px;
-            background: #3b5bdb;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 800;
-            color: #fff;
-            flex-shrink: 0;
-        }
-
-        .logo-name {
-            font-size: 14px;
-            font-weight: 700;
-            color: #e6edf3;
-            letter-spacing: 1px;
-        }
-
-        .sidebar-app {
-            padding: 10px 12px;
-            border-bottom: 1px solid #21213a;
-        }
-
-        .app-selector {
-            background: #13131f;
-            border: 1px solid #21213a;
-            border-radius: 6px;
-            padding: 7px 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-        }
-
-        .app-name { font-size: 12px; color: #8b949e; }
-        .app-arrow { color: #8b949e; font-size: 10px; }
-
-        .sidebar-nav { padding: 8px 0; flex: 1; }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 7px 16px;
-            color: #8b949e;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 400;
-            cursor: pointer;
-            transition: all 0.15s;
-            position: relative;
-        }
-
-        .nav-item:hover { color: #e6edf3; background: #13131f; }
-
-        .nav-item.active {
-            color: #e6edf3;
-            background: #13131f;
-        }
-
-        .nav-item.active::before {
-            content: '';
-            position: absolute;
-            left: 0; top: 0; bottom: 0;
-            width: 3px;
-            background: #3b5bdb;
-            border-radius: 0 2px 2px 0;
-        }
-
-        .nav-icon { font-size: 13px; width: 16px; text-align: center; }
-
-        .nav-badge {
-            margin-left: auto;
-            background: #21213a;
-            color: #8b949e;
-            font-size: 10px;
-            padding: 1px 6px;
-            border-radius: 10px;
-        }
-
-        .nav-section {
-            padding: 12px 16px 4px;
-            font-size: 10px;
-            font-weight: 600;
-            color: #30363d;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .sidebar-bottom {
-            padding: 10px 12px;
-            border-top: 1px solid #21213a;
-        }
-
-        .user-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .user-avatar {
-            width: 26px; height: 26px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #3b5bdb, #7048e8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: 700;
-            color: #fff;
-            flex-shrink: 0;
-        }
-
-        .user-info { flex: 1; min-width: 0; }
-        .user-name { font-size: 12px; font-weight: 600; color: #e6edf3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .user-role { font-size: 10px; color: #8b949e; }
-
-        .logout-icon {
-            color: #8b949e;
-            text-decoration: none;
-            font-size: 14px;
-            padding: 4px;
-            transition: color 0.15s;
-        }
-
-        .logout-icon:hover { color: #f85149; }
-
-        /* MAIN */
-        .main {
-            margin-left: 200px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* TOPBAR */
-        .topbar {
-            height: 48px;
-            background: #0a0a12;
-            border-bottom: 1px solid #21213a;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 13px;
-            color: #8b949e;
-        }
-
-        .breadcrumb a { color: #8b949e; text-decoration: none; }
-        .breadcrumb a:hover { color: #e6edf3; }
-        .breadcrumb span { color: #e6edf3; font-weight: 500; }
-        .breadcrumb-sep { color: #30363d; }
-
-        .upgrade-btn {
-            font-size: 12px;
-            color: #f85149;
-            background: rgba(248,81,73,0.1);
-            border: 1px solid rgba(248,81,73,0.2);
-            border-radius: 5px;
-            padding: 4px 10px;
-            text-decoration: none;
-        }
-
-        /* PAGE */
-        .page { padding: 20px; flex: 1; }
-
-        .page-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #e6edf3;
-            margin-bottom: 3px;
-        }
-
-        .page-desc {
-            font-size: 12px;
-            color: #8b949e;
-            margin-bottom: 20px;
-        }
-
-        /* STATS */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1px;
-            background: #21213a;
-            border: 1px solid #21213a;
-            border-radius: 8px;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-
-        .stat {
-            background: #0f0f17;
-            padding: 18px 20px;
-            text-align: center;
-        }
-
-        .stat-num {
-            font-size: 28px;
-            font-weight: 700;
-            color: #e6edf3;
-            line-height: 1;
-            margin-bottom: 4px;
-        }
-
-        .stat-lbl {
-            font-size: 12px;
-            color: #8b949e;
-        }
-
-        /* TABLE SECTION */
-        .section {
-            background: #0f0f17;
-            border: 1px solid #21213a;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .section-header {
-            padding: 12px 16px;
-            border-bottom: 1px solid #21213a;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-        }
-
-        .section-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #e6edf3;
-        }
-
-        .search-box {
-            background: #13131f;
-            border: 1px solid #21213a;
-            border-radius: 6px;
-            color: #e6edf3;
-            font-family: 'Inter', sans-serif;
-            font-size: 12px;
-            padding: 6px 12px;
-            outline: none;
-            width: 200px;
-            transition: border-color 0.2s;
-        }
-
-        .search-box:focus { border-color: #3b5bdb; }
-        .search-box::placeholder { color: #30363d; }
-
-        .header-btns { display: flex; gap: 6px; align-items: center; }
-
-        .icon-btn {
-            width: 28px; height: 28px;
-            background: #13131f;
-            border: 1px solid #21213a;
-            border-radius: 5px;
-            color: #8b949e;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.15s;
-        }
-
-        .icon-btn:hover { border-color: #3b5bdb; color: #3b5bdb; }
-
-        .create-btn {
-            background: #3b5bdb;
-            border: none;
-            border-radius: 5px;
-            color: #fff;
-            font-family: 'Inter', sans-serif;
-            font-size: 12px;
-            font-weight: 600;
-            padding: 6px 12px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: background 0.15s;
-            white-space: nowrap;
-        }
-
-        .create-btn:hover { background: #4c6ef5; }
-
-        /* SELECT ALL */
-        .select-all-row {
-            padding: 8px 16px;
-            border-bottom: 1px solid #21213a;
-        }
-
-        .select-all-btn {
-            font-size: 12px;
-            color: #8b949e;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-family: 'Inter', sans-serif;
-        }
-
-        table { width: 100%; border-collapse: collapse; }
-
-        th {
-            padding: 8px 14px;
-            font-size: 11px;
-            font-weight: 600;
-            color: #8b949e;
-            text-align: left;
-            background: #0a0a12;
-            border-bottom: 1px solid #21213a;
-            white-space: nowrap;
-        }
-
-        td {
-            padding: 10px 14px;
-            font-size: 13px;
-            color: #8b949e;
-            border-bottom: 1px solid #21213a;
-            vertical-align: middle;
-        }
-
-        tbody tr:last-child td { border-bottom: none; }
-        tbody tr:hover td { background: #13131f; }
-
-        .key-text {
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            color: #79c0ff;
-            cursor: pointer;
-        }
-
-        .key-text:hover { text-decoration: underline; }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 500;
-        }
-
-        .badge-dot { width: 6px; height: 6px; border-radius: 50%; }
-
-        .badge-active { background: rgba(63,185,80,0.15); color: #3fb950; }
-        .badge-active .badge-dot { background: #3fb950; }
-        .badge-expired { background: rgba(248,81,73,0.15); color: #f85149; }
-        .badge-expired .badge-dot { background: #f85149; }
-        .badge-lifetime { background: rgba(188,140,255,0.15); color: #bc8cff; }
-        .badge-lifetime .badge-dot { background: #bc8cff; }
-
-        .row-btns { display: flex; gap: 5px; }
-
-        .row-btn {
-            padding: 3px 9px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 500;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            font-family: 'Inter', sans-serif;
-            border: none;
-            transition: all 0.15s;
-        }
-
-        .btn-green { background: rgba(63,185,80,0.15); color: #3fb950; border: 1px solid rgba(63,185,80,0.2); }
-        .btn-green:hover { background: rgba(63,185,80,0.25); }
-        .btn-purple { background: rgba(188,140,255,0.15); color: #bc8cff; border: 1px solid rgba(188,140,255,0.2); }
-        .btn-purple:hover { background: rgba(188,140,255,0.25); }
-        .btn-red { background: rgba(248,81,73,0.15); color: #f85149; border: 1px solid rgba(248,81,73,0.2); }
-        .btn-red:hover { background: rgba(248,81,73,0.25); }
-
-        /* TABLE FOOTER */
-        .table-footer {
-            padding: 10px 16px;
-            border-top: 1px solid #21213a;
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #8b949e;
-        }
-
-        .empty {
-            padding: 50px;
-            text-align: center;
-            color: #30363d;
-        }
-
-        .empty-icon { font-size: 32px; margin-bottom: 10px; }
-
-        /* MODAL */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 500;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-overlay.show { display: flex; }
-
-        .modal {
-            background: #161b22;
-            border: 1px solid #21213a;
-            border-radius: 10px;
-            width: 460px;
-            padding: 24px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-        }
-
-        .modal-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: #e6edf3;
-            margin-bottom: 20px;
-        }
-
-        .modal-field {
-            margin-bottom: 16px;
-        }
-
-        .modal-label {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            font-weight: 500;
-            color: #8b949e;
-            margin-bottom: 6px;
-        }
-
-        .required { color: #f85149; }
-
-        .modal-input, .modal-select {
-            width: 100%;
-            background: #0d1117;
-            border: 1px solid #21213a;
-            border-radius: 6px;
-            color: #e6edf3;
-            font-family: 'Inter', sans-serif;
-            font-size: 13px;
-            padding: 8px 12px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .modal-input:focus, .modal-select:focus { border-color: #3b5bdb; }
-        .modal-input::placeholder { color: #30363d; }
-        .modal-select option { background: #161b22; }
-
-        .modal-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-            margin-top: 20px;
-        }
-
-        .btn-cancel {
-            background: transparent;
-            border: 1px solid #21213a;
-            border-radius: 6px;
-            color: #8b949e;
-            font-family: 'Inter', sans-serif;
-            font-size: 13px;
-            font-weight: 500;
-            padding: 7px 16px;
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-
-        .btn-cancel:hover { border-color: #8b949e; color: #e6edf3; }
-
-        .btn-submit {
-            background: #3b5bdb;
-            border: none;
-            border-radius: 6px;
-            color: #fff;
-            font-family: 'Inter', sans-serif;
-            font-size: 13px;
-            font-weight: 600;
-            padding: 7px 20px;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-
-        .btn-submit:hover { background: #4c6ef5; }
+        body { background: #09090d; }
+        ::-webkit-scrollbar { display: none; }
+        .modal { display: none; }
+        .modal.show { display: flex; }
     </style>
 </head>
-<body>
+<body class="text-white font-sans">
+<div class="flex min-h-screen">
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-    <div class="sidebar-logo">
-        <div class="logo-icon">V</div>
-        <span class="logo-name">VELTRIX</span>
-    </div>
-
-    <div class="sidebar-app">
-        <div class="app-selector">
-            <span class="app-name">{{ admin_name or 'Admin' }}'s App</span>
-            <span class="app-arrow">▾</span>
+    <!-- SIDEBAR -->
+    <aside class="fixed top-0 left-0 z-20 flex flex-col w-64 h-full bg-[#0f0f17] border-r border-gray-800">
+        <div class="flex items-center gap-3 px-4 py-4 border-b border-gray-800">
+            <div class="w-7 h-7 bg-blue-700 rounded-lg flex items-center justify-center text-sm font-black">V</div>
+            <span class="text-white font-bold tracking-widest text-sm">VELTRIX</span>
         </div>
-    </div>
-
-    <nav class="sidebar-nav">
-        <div class="nav-section">Manage Apps</div>
-        <div class="nav-item active">
-            <span class="nav-icon">🔑</span> Licenses
-        </div>
-        <div class="nav-item">
-            <span class="nav-icon">👤</span> Users
-            <span class="nav-badge">0</span>
-        </div>
-        <div class="nav-item">
-            <span class="nav-icon">🪙</span> Tokens
-        </div>
-        <div class="nav-section">System</div>
-        <div class="nav-item">
-            <span class="nav-icon">📋</span> Event Logs
-        </div>
-        <div class="nav-item">
-            <span class="nav-icon">⚙️</span> Settings
-        </div>
-    </nav>
-
-    <div class="sidebar-bottom">
-        <div class="user-row">
-            <div class="user-avatar">{{ admin_name[0] if admin_name else 'A' }}</div>
-            <div class="user-info">
-                <div class="user-name">{{ admin_name or 'Admin' }}</div>
-                <div class="user-role">Administrator</div>
-            </div>
-            <a href="/logout" class="logout-icon" title="Çıkış">⏻</a>
-        </div>
-    </div>
-</div>
-
-<!-- MAIN -->
-<div class="main">
-    <div class="topbar">
-        <div class="breadcrumb">
-            <a href="#">Veltrix Panel</a>
-            <span class="breadcrumb-sep">›</span>
-            <span>Licenses</span>
-        </div>
-    </div>
-
-    <div class="page">
-        <div class="page-title">Licenses</div>
-        <div class="page-desc">Manage your application licenses here.</div>
-
-        <!-- Stats -->
-        <div class="stats">
-            <div class="stat">
-                <div class="stat-num">{{ keys|length }}</div>
-                <div class="stat-lbl">Total Keys</div>
-            </div>
-            <div class="stat">
-                <div class="stat-num">{{ keys.values()|selectattr('expired','equalto',false)|list|length }}</div>
-                <div class="stat-lbl">Active</div>
-            </div>
-            <div class="stat">
-                <div class="stat-num">{{ keys.values()|selectattr('expired','equalto',true)|list|length }}</div>
-                <div class="stat-lbl">Expired</div>
-            </div>
-            <div class="stat">
-                <div class="stat-num">{{ keys.values()|selectattr('hwid','ne',none)|list|length }}</div>
-                <div class="stat-lbl">Used</div>
+        <div class="px-3 py-3 border-b border-gray-800">
+            <div class="bg-[#09090d] border border-gray-800 rounded-lg px-3 py-2 flex justify-between items-center">
+                <span class="text-gray-400 text-xs">{{ admin_name or 'Admin' }}'s Application</span>
+                <span class="text-gray-600 text-xs">▾</span>
             </div>
         </div>
+        <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+            <p class="text-xs text-gray-600 uppercase tracking-widest px-2 mb-2">App</p>
+            <a href="#" class="flex items-center gap-3 px-2 py-2 rounded-lg text-white bg-blue-700 bg-opacity-20 text-sm">
+                <i class="lni lni-key text-blue-500 w-4"></i><span>Licenses</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-2 py-2 rounded-lg text-gray-300 hover:opacity-60 hover:bg-blue-700 text-sm">
+                <i class="lni lni-users w-4"></i><span>Users</span>
+                <span class="ml-auto bg-gray-800 text-gray-500 text-xs px-2 rounded-full">0</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-2 py-2 rounded-lg text-gray-300 hover:opacity-60 hover:bg-blue-700 text-sm">
+                <i class="lni lni-tag w-4"></i><span>Tokens</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-2 py-2 rounded-lg text-gray-300 hover:opacity-60 hover:bg-blue-700 text-sm">
+                <i class="lni lni-popup w-4"></i><span>Chats</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-2 py-2 rounded-lg text-gray-300 hover:opacity-60 hover:bg-blue-700 text-sm">
+                <i class="lni lni-timer w-4"></i><span>Sessions</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-2 py-2 rounded-lg text-gray-300 hover:opacity-60 hover:bg-blue-700 text-sm">
+                <i class="lni lni-archive w-4"></i><span>Event Logs</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-2 py-2 rounded-lg text-gray-300 hover:opacity-60 hover:bg-blue-700 text-sm">
+                <i class="lni lni-files w-4"></i><span>Files</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-2 py-2 rounded-lg text-gray-300 hover:opacity-60 hover:bg-blue-700 text-sm">
+                <i class="lni lni-cog w-4"></i><span>Settings</span>
+            </a>
+            <p class="text-xs text-gray-600 uppercase tracking-widest px-2 mb-2 mt-4">Account</p>
+            <a href="/logout" class="flex items-center gap-3 px-2 py-2 rounded-lg text-gray-300 hover:opacity-60 hover:bg-red-700 text-sm">
+                <i class="lni lni-exit w-4"></i><span>Logout</span>
+            </a>
+        </nav>
+        <div class="px-3 py-3 border-t border-gray-800">
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-full bg-blue-700 flex items-center justify-center text-xs font-bold flex-shrink-0">{{ admin_name[0] if admin_name else 'A' }}</div>
+                <div class="flex-1 min-w-0">
+                    <div class="text-xs font-semibold text-white truncate">{{ admin_name or 'Admin' }}</div>
+                    <div class="text-xs text-gray-500">Administrator</div>
+                </div>
+            </div>
+        </div>
+    </aside>
 
-        <!-- Table -->
-        <div class="section">
-            <div class="section-header">
-                <input class="search-box" type="text" id="searchInput" placeholder="Search licenses...">
-                <div class="header-btns">
-                    <div class="icon-btn" title="Filter">⚙</div>
-                    <div class="icon-btn" title="Grid">▦</div>
-                    <div class="icon-btn" title="Refresh" onclick="location.reload()">↺</div>
-                    <div class="icon-btn" title="Delete">🗑</div>
-                    <button class="create-btn" onclick="document.getElementById('modal').classList.add('show')">
-                        + Create License
+    <!-- MAIN -->
+    <div class="ml-64 flex-1 flex flex-col">
+        <div class="sticky top-0 z-10 bg-[#0f0f17] border-b border-gray-800 px-6 py-3">
+            <nav class="flex items-center gap-2 text-xs text-gray-500">
+                <a href="#" class="hover:text-white">Manage Apps</a>
+                <span>›</span>
+                <a href="#" class="hover:text-white">{{ admin_name or 'Admin' }}'s Application</a>
+                <span>›</span>
+                <span class="text-white">Licenses</span>
+            </nav>
+        </div>
+
+        <div class="p-6 bg-[#09090d] flex-1">
+            <div class="bg-[#0f0f17] rounded-xl p-6">
+                <div class="mb-4">
+                    <h1 class="text-2xl font-semibold text-white">Licenses</h1>
+                    <p class="text-xs text-gray-500 mt-1">Licenses allow your users to register on your application. <a href="#" class="text-blue-500">Learn More.</a></p>
+                </div>
+
+                <!-- Stats -->
+                <div class="grid grid-cols-4 gap-0 mb-6 border border-gray-800 rounded-lg overflow-hidden">
+                    <div class="bg-[#0f0f17] p-5 text-center border-r border-gray-800">
+                        <div class="text-3xl font-bold text-white">{{ keys|length }}</div>
+                        <div class="text-xs text-gray-500 mt-1">Total Keys</div>
+                    </div>
+                    <div class="bg-[#0f0f17] p-5 text-center border-r border-gray-800">
+                        <div class="text-3xl font-bold text-white">{{ keys.values()|selectattr('expired','equalto',false)|list|length }}</div>
+                        <div class="text-xs text-gray-500 mt-1">Active</div>
+                    </div>
+                    <div class="bg-[#0f0f17] p-5 text-center border-r border-gray-800">
+                        <div class="text-3xl font-bold text-white">{{ keys.values()|selectattr('expired','equalto',true)|list|length }}</div>
+                        <div class="text-xs text-gray-500 mt-1">Expired</div>
+                    </div>
+                    <div class="bg-[#0f0f17] p-5 text-center">
+                        <div class="text-3xl font-bold text-white">{{ keys.values()|selectattr('hwid','ne',none)|list|length }}</div>
+                        <div class="text-xs text-gray-500 mt-1">Used</div>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex flex-wrap gap-2 mb-5">
+                    <button onclick="document.getElementById('createModal').classList.add('show')"
+                        class="inline-flex items-center gap-2 text-white bg-blue-700 hover:opacity-70 font-medium rounded-lg text-sm px-4 py-2 transition">
+                        <i class="lni lni-circle-plus"></i> Create Keys
+                    </button>
+                    <button class="inline-flex items-center gap-2 text-white bg-red-700 hover:opacity-70 font-medium rounded-lg text-sm px-4 py-2 transition">
+                        <i class="lni lni-trash-can"></i> Delete All Keys
+                    </button>
+                    <button class="inline-flex items-center gap-2 text-white bg-red-700 hover:opacity-70 font-medium rounded-lg text-sm px-4 py-2 transition">
+                        <i class="lni lni-trash-can"></i> Delete All Used Keys
+                    </button>
+                    <button class="inline-flex items-center gap-2 text-white bg-red-700 hover:opacity-70 font-medium rounded-lg text-sm px-4 py-2 transition">
+                        <i class="lni lni-trash-can"></i> Delete All Unused Keys
                     </button>
                 </div>
-            </div>
 
-            <div class="select-all-row">
-                <button class="select-all-btn">Select All</button>
-            </div>
+                <!-- Search -->
+                <div class="flex items-center justify-between mb-3">
+                    <input id="searchInput" type="text" placeholder="Search licenses..."
+                        class="bg-[#09090d] border border-gray-800 text-white text-sm rounded-lg px-3 py-2 w-64 outline-none focus:border-blue-700">
+                    <div class="flex gap-2">
+                        <button class="p-2 bg-[#09090d] border border-gray-800 rounded-lg text-gray-400 hover:text-white">⚙</button>
+                        <button onclick="location.reload()" class="p-2 bg-[#09090d] border border-gray-800 rounded-lg text-gray-400 hover:text-white">↺</button>
+                        <button class="p-2 bg-[#09090d] border border-gray-800 rounded-lg text-gray-400 hover:text-white">🗑</button>
+                    </div>
+                </div>
 
-            {% if keys %}
-            <table id="keysTable">
-                <thead>
-                    <tr>
-                        <th>License Key</th>
-                        <th>Status</th>
-                        <th>Expiry Date</th>
-                        <th>Note</th>
-                        <th>HWID</th>
-                        <th>Created By</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for key, data in keys.items() %}
-                    <tr>
-                        <td>
-                            <span class="key-text" onclick="copyKey(this,'{{ key }}')" title="Click to copy">{{ key }}</span>
-                        </td>
-                        <td>
-                            {% if data.expires == 'lifetime' %}
-                                <span class="badge badge-lifetime"><span class="badge-dot"></span>Lifetime</span>
-                            {% elif data.expired %}
-                                <span class="badge badge-expired"><span class="badge-dot"></span>Expired</span>
-                            {% else %}
-                                <span class="badge badge-active"><span class="badge-dot"></span>Active</span>
-                            {% endif %}
-                        </td>
-                        <td>{{ data.expires_display }}</td>
-                        <td>{{ data.note or '—' }}</td>
-                        <td>
-                            {% if data.hwid %}
-                                <span style="font-family:monospace;font-size:11px" title="{{ data.hwid }}">{{ data.hwid[:12] }}...</span>
-                            {% else %}—{% endif %}
-                        </td>
-                        <td>{{ data.created_by or '—' }}</td>
-                        <td>
-                            <div class="row-btns">
-                                {% if data.hwid %}
-                                <a href="/reset_hwid/{{ key }}" class="row-btn btn-purple">Reset HWID</a>
-                                {% endif %}
-                                <a href="/delete_key/{{ key }}" class="row-btn btn-red" onclick="return confirm('Delete this key?')">Delete</a>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <div class="table-footer">
-                <span>Previous</span>
-                <span>Total {{ keys|length }} licenses</span>
-                <span>Next</span>
+                <!-- Select All -->
+                <div class="mb-2">
+                    <button class="text-xs text-gray-500 hover:text-white">Select All</button>
+                </div>
+
+                {% if keys %}
+                <div class="relative overflow-x-auto">
+                    <table id="keysTable" class="w-full text-sm text-left text-white">
+                        <thead>
+                            <tr class="border-2 border-gray-200 text-blue-700">
+                                <th class="px-5 py-3">Key</th>
+                                <th class="px-5 py-3">Status</th>
+                                <th class="px-5 py-3">Expiry Date</th>
+                                <th class="px-5 py-3">Note</th>
+                                <th class="px-5 py-3">HWID</th>
+                                <th class="px-5 py-3">Created By</th>
+                                <th class="px-5 py-3">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for key, data in keys.items() %}
+                            <tr class="border-b border-gray-800 hover:bg-[#09090d] transition">
+                                <td class="px-5 py-3">
+                                    <span class="font-mono text-xs text-blue-400 cursor-pointer hover:underline"
+                                        onclick="copyKey(this,'{{ key }}')" title="Click to copy">{{ key }}</span>
+                                </td>
+                                <td class="px-5 py-3">
+                                    {% if data.expires == 'lifetime' %}
+                                        <span class="inline-flex items-center gap-1 bg-purple-900 bg-opacity-40 text-purple-400 text-xs px-2 py-1 rounded-full">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-purple-400 inline-block"></span>Lifetime
+                                        </span>
+                                    {% elif data.expired %}
+                                        <span class="inline-flex items-center gap-1 bg-red-900 bg-opacity-40 text-red-400 text-xs px-2 py-1 rounded-full">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-red-400 inline-block"></span>Expired
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex items-center gap-1 bg-green-900 bg-opacity-40 text-green-400 text-xs px-2 py-1 rounded-full">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-green-400 inline-block"></span>Active
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-5 py-3 text-gray-400 text-xs">{{ data.expires_display }}</td>
+                                <td class="px-5 py-3 text-gray-400">{{ data.note or '—' }}</td>
+                                <td class="px-5 py-3">
+                                    {% if data.hwid %}
+                                        <span class="font-mono text-xs text-gray-600" title="{{ data.hwid }}">{{ data.hwid[:12] }}...</span>
+                                    {% else %}<span class="text-gray-700">—</span>{% endif %}
+                                </td>
+                                <td class="px-5 py-3 text-gray-400 text-xs">{{ data.created_by or '—' }}</td>
+                                <td class="px-5 py-3">
+                                    <div class="flex gap-2">
+                                        {% if data.hwid %}
+                                        <a href="/reset_hwid/{{ key }}"
+                                            class="text-xs text-purple-400 bg-purple-900 bg-opacity-30 border border-purple-800 px-2 py-1 rounded hover:opacity-70">
+                                            Reset HWID
+                                        </a>
+                                        {% endif %}
+                                        <a href="/delete_key/{{ key }}" onclick="return confirm('Delete?')"
+                                            class="text-xs text-red-400 bg-red-900 bg-opacity-30 border border-red-800 px-2 py-1 rounded hover:opacity-70">
+                                            Delete
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="flex justify-between items-center mt-4 text-xs text-gray-600">
+                    <span>Previous</span>
+                    <span>Total {{ keys|length }} licenses</span>
+                    <span>Next</span>
+                </div>
+                {% else %}
+                <div class="text-center py-16">
+                    <p class="text-yellow-500 text-sm mb-2">🔑 Get started by creating your first license.</p>
+                    <button onclick="document.getElementById('createModal').classList.add('show')"
+                        class="mt-2 inline-flex items-center gap-2 text-white bg-blue-700 hover:opacity-70 font-medium rounded-lg text-sm px-4 py-2">
+                        Create License
+                    </button>
+                </div>
+                {% endif %}
             </div>
-            {% else %}
-            <div class="empty">
-                <div class="empty-icon">🔑</div>
-                Get started by creating your first license.
-                <br><br>
-                <button class="create-btn" style="margin:0 auto" onclick="document.getElementById('modal').classList.add('show')">
-                    + Create License
-                </button>
-            </div>
-            {% endif %}
         </div>
     </div>
 </div>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="modal">
-    <div class="modal">
-        <div class="modal-title">Create a new license</div>
-        <form method="POST" action="/create_key">
-            <div class="modal-field">
-                <div class="modal-label">License Amount <span class="required">*</span></div>
-                <input class="modal-input" type="text" value="1" readonly style="color:#8b949e">
+<!-- CREATE MODAL -->
+<div id="createModal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60 p-4">
+    <div class="relative w-full max-w-md">
+        <div class="bg-[#0f0f17] rounded-lg border border-blue-700 shadow-xl">
+            <div class="px-6 py-6">
+                <h3 class="text-xl font-medium text-white">Create A New Key</h3>
+                <hr class="border-gray-700 my-4">
+                <form method="POST" action="/create_key" class="space-y-4">
+                    <div class="relative">
+                        <input type="text" name="note" id="note" placeholder=" "
+                            class="block px-3 pb-2.5 pt-4 w-full text-sm text-white bg-transparent rounded-lg border border-gray-700 focus:outline-none focus:border-blue-600 peer">
+                        <label for="note" class="absolute text-sm text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-[#0f0f17] px-2 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">License Note</label>
+                    </div>
+                    <div class="relative">
+                        <input type="text" name="custom_key" id="ckey" placeholder=" "
+                            class="block px-3 pb-2.5 pt-4 w-full text-sm text-white bg-transparent rounded-lg border border-gray-700 focus:outline-none focus:border-blue-600 peer">
+                        <label for="ckey" class="absolute text-sm text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-[#0f0f17] px-2 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Custom Key (optional)</label>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <select name="duration" class="bg-[#0f0f17] border border-gray-700 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                <option value="7">Days — 7</option>
+                                <option value="30" selected>Days — 30</option>
+                                <option value="90">Days — 90</option>
+                                <option value="365">Years — 1</option>
+                                <option value="lifetime">Lifetime</option>
+                            </select>
+                        </div>
+                        <div>
+                            <input type="text" placeholder="Expiry Duration" readonly
+                                class="bg-transparent border border-gray-700 text-gray-500 text-sm rounded-lg block w-full p-2.5">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 pt-2">
+                        <button type="button" onclick="document.getElementById('createModal').classList.remove('show')"
+                            class="w-full text-white bg-gray-700 hover:opacity-70 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Cancel</button>
+                        <button type="submit"
+                            class="w-full text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Create License</button>
+                    </div>
+                </form>
             </div>
-            <div class="modal-field">
-                <div class="modal-label">Note (Kullanıcı Adı)</div>
-                <input class="modal-input" type="text" name="note" placeholder="Discord: xyz#1234, kullanıcı adı...">
-            </div>
-            <div class="modal-field">
-                <div class="modal-label">Custom Key (opsiyonel)</div>
-                <input class="modal-input" type="text" name="custom_key" placeholder="VLTX-ÖZEL-KEY">
-            </div>
-            <div class="modal-row">
-                <div class="modal-field">
-                    <div class="modal-label">Expiry Unit <span class="required">*</span></div>
-                    <select class="modal-select" name="duration">
-                        <option value="7">7 Days</option>
-                        <option value="30" selected>30 Days</option>
-                        <option value="90">90 Days</option>
-                        <option value="365">1 Year</option>
-                        <option value="lifetime">Lifetime</option>
-                    </select>
-                </div>
-                <div class="modal-field">
-                    <div class="modal-label">Expiry Duration <span class="required">*</span></div>
-                    <input class="modal-input" type="text" placeholder="Auto" readonly style="color:#8b949e">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-cancel" onclick="document.getElementById('modal').classList.remove('show')">Cancel</button>
-                <button type="submit" class="btn-submit">Create License</button>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
@@ -763,18 +275,16 @@ function copyKey(el, key) {
     navigator.clipboard.writeText(key);
     const orig = el.textContent;
     el.textContent = '✓ Copied!';
-    el.style.color = '#3fb950';
+    el.style.color = '#4ade80';
     setTimeout(() => { el.textContent = orig; el.style.color = ''; }, 1500);
 }
-
 document.getElementById('searchInput')?.addEventListener('input', function() {
     const q = this.value.toLowerCase();
     document.querySelectorAll('#keysTable tbody tr').forEach(row => {
         row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
     });
 });
-
-document.getElementById('modal')?.addEventListener('click', function(e) {
+document.getElementById('createModal')?.addEventListener('click', function(e) {
     if (e.target === this) this.classList.remove('show');
 });
 </script>
