@@ -190,5 +190,33 @@ def users():
                 'created_by': data.get('created_by', '—')
             })
     return render_template('users.html', admin_name=session.get('admin_name'), users=user_list)
+    @app.route('/sessions')
+def sessions():
+    if not session.get('admin'):
+        return redirect(url_for('login'))
+    keys = load_keys()
+    active_sessions = []
+    for key, data in keys.items():
+        if data.get('hwid'):
+            active_sessions.append({
+                'key': key,
+                'hwid': data['hwid'],
+                'note': data.get('note', '—'),
+                'created_by': data.get('created_by', '—'),
+                'expires': data.get('expires_display', '—')
+            })
+    return render_template('sessions.html', admin_name=session.get('admin_name'), sessions=active_sessions)
+
+@app.route('/logs')
+def logs():
+    if not session.get('admin'):
+        return redirect(url_for('login'))
+    return render_template('logs.html', admin_name=session.get('admin_name'))
+
+@app.route('/settings')
+def settings():
+    if not session.get('admin'):
+        return redirect(url_for('login'))
+    return render_template('settings.html', admin_name=session.get('admin_name'))
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
