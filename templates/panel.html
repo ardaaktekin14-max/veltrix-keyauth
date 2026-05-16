@@ -5,154 +5,406 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Veltrix Admin Panel</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap');
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            background: #0a0a0f;
+            background: #070710;
             color: #fff;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Inter', sans-serif;
             min-height: 100vh;
         }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 20% 50%, #1e90ff08 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 20%, #7b2fff08 0%, transparent 50%),
+                        radial-gradient(ellipse at 50% 80%, #00ff8808 0%, transparent 50%);
+            animation: bgPulse 8s ease-in-out infinite alternate;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes bgPulse {
+            0% { transform: rotate(0deg) scale(1); }
+            100% { transform: rotate(3deg) scale(1.05); }
+        }
+
         header {
-            background: #12121a;
-            border-bottom: 1px solid #1e90ff33;
-            padding: 16px 30px;
+            position: relative;
+            z-index: 10;
+            background: rgba(10, 10, 20, 0.9);
+            border-bottom: 1px solid #1e90ff22;
+            padding: 0 30px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(20px);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-logo .icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #1e90ff, #7b2fff);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .header-logo h1 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 3px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .admin-badge {
+            background: #1e90ff15;
+            border: 1px solid #1e90ff33;
+            color: #1e90ff;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            color: #ff4444;
+            text-decoration: none;
+            font-size: 13px;
+            padding: 6px 14px;
+            border: 1px solid #ff444433;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: #ff444415;
+            border-color: #ff444466;
+        }
+
+        .main {
+            position: relative;
+            z-index: 1;
+            padding: 28px 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 20px 22px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+
+        .stat-card:hover { border-color: rgba(255,255,255,0.12); }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+        }
+
+        .stat-card:nth-child(1)::before { background: linear-gradient(90deg, #1e90ff, transparent); }
+        .stat-card:nth-child(2)::before { background: linear-gradient(90deg, #00ff88, transparent); }
+        .stat-card:nth-child(3)::before { background: linear-gradient(90deg, #ff4444, transparent); }
+        .stat-card:nth-child(4)::before { background: linear-gradient(90deg, #aa88ff, transparent); }
+
+        .stat-num {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 36px;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .stat-card:nth-child(1) .stat-num { color: #1e90ff; }
+        .stat-card:nth-child(2) .stat-num { color: #00ff88; }
+        .stat-card:nth-child(3) .stat-num { color: #ff4444; }
+        .stat-card:nth-child(4) .stat-num { color: #aa88ff; }
+
+        .stat-label { font-size: 12px; color: #555; font-weight: 500; letter-spacing: 0.5px; }
+
+        /* Create box */
+        .create-box {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+            padding: 22px 24px;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: #888;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 11px;
+            color: #555;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        select, input[type="text"] {
+            padding: 9px 13px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px;
+            color: #ccc;
+            font-size: 13px;
+            outline: none;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        select:focus, input[type="text"]:focus {
+            border-color: #1e90ff55;
+            background: rgba(30,144,255,0.05);
+            color: #fff;
+        }
+
+        select option { background: #1a1a2e; }
+
+        .btn-create {
+            padding: 9px 20px;
+            background: linear-gradient(135deg, #1e90ff, #0066cc);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+            white-space: nowrap;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 15px #1e90ff22;
+        }
+
+        .btn-create:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px #1e90ff44;
+        }
+
+        /* Keys table */
+        .keys-section {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .keys-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
-        header h1 { color: #1e90ff; font-size: 22px; letter-spacing: 3px; text-shadow: 0 0 15px #1e90ff; }
-        header a { color: #555; text-decoration: none; font-size: 13px; transition: color 0.2s; }
-        header a:hover { color: #ff4444; }
-        .main { padding: 30px; }
-        .create-box {
-            background: #12121a;
-            border: 1px solid #1e90ff33;
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 30px;
+
+        .keys-count {
+            font-size: 12px;
+            color: #444;
         }
-        .create-box h2 { color: #1e90ff; margin-bottom: 18px; font-size: 16px; letter-spacing: 1px; }
-        .form-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
-        .form-group { display: flex; flex-direction: column; gap: 6px; }
-        .form-group label { color: #888; font-size: 12px; }
-        select, input[type="text"] {
-            padding: 10px 14px;
-            background: #1a1a25;
-            border: 1px solid #1e90ff33;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 14px;
-            outline: none;
-            transition: border 0.3s;
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
         }
-        select:focus, input[type="text"]:focus { border-color: #1e90ff; }
-        .btn {
-            padding: 10px 22px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            transition: opacity 0.2s;
-        }
-        .btn:hover { opacity: 0.8; }
-        .btn-primary { background: linear-gradient(135deg, #1e90ff, #0066cc); color: #fff; }
-        .btn-danger { background: #ff3b3b22; color: #ff6b6b; border: 1px solid #ff3b3b44; }
-        .btn-warning { background: #ffaa0022; color: #ffcc44; border: 1px solid #ffaa0044; }
-        .stats {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-        }
-        .stat-card {
-            background: #12121a;
-            border: 1px solid #1e90ff22;
-            border-radius: 10px;
-            padding: 16px 24px;
-            flex: 1;
-            min-width: 140px;
-        }
-        .stat-card .num { font-size: 28px; font-weight: bold; color: #1e90ff; }
-        .stat-card .label { font-size: 12px; color: #555; margin-top: 4px; }
-        .keys-table {
-            background: #12121a;
-            border: 1px solid #1e90ff22;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        .keys-table h2 { color: #1e90ff; font-size: 16px; letter-spacing: 1px; padding: 18px 24px; border-bottom: 1px solid #1e90ff22; }
-        table { width: 100%; border-collapse: collapse; }
+
         th {
-            background: #0f0f18;
-            color: #555;
-            font-size: 11px;
+            padding: 11px 18px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #444;
             letter-spacing: 1px;
-            padding: 12px 16px;
+            text-transform: uppercase;
             text-align: left;
+            background: rgba(255,255,255,0.01);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
         }
-        td { padding: 12px 16px; border-bottom: 1px solid #ffffff08; font-size: 13px; }
-        tr:last-child td { border-bottom: none; }
-        tr:hover td { background: #ffffff04; }
-        .key-text {
-            font-family: monospace;
-            color: #1e90ff;
+
+        td {
+            padding: 13px 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
             font-size: 13px;
-            background: #1e90ff11;
-            padding: 3px 8px;
-            border-radius: 4px;
+            color: #aaa;
         }
+
+        tr:last-child td { border-bottom: none; }
+
+        tr:hover td { background: rgba(255,255,255,0.02); }
+
+        .key-text {
+            font-family: 'Courier New', monospace;
+            color: #1e90ff;
+            font-size: 12px;
+            background: #1e90ff0d;
+            padding: 4px 10px;
+            border-radius: 5px;
+            border: 1px solid #1e90ff22;
+            user-select: all;
+        }
+
         .badge {
             padding: 3px 10px;
             border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
-        .badge-active { background: #00ff8822; color: #00ff88; }
-        .badge-expired { background: #ff3b3b22; color: #ff6b6b; }
-        .badge-lifetime { background: #aa88ff22; color: #aa88ff; }
-        .actions { display: flex; gap: 8px; }
-        .empty { text-align: center; color: #333; padding: 40px; font-size: 14px; }
-        .note-text { color: #666; font-size: 12px; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .hwid-text { font-family: monospace; color: #444; font-size: 11px; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        .badge-active { background: #00ff8815; color: #00ff88; border: 1px solid #00ff8830; }
+        .badge-expired { background: #ff444415; color: #ff6666; border: 1px solid #ff444430; }
+        .badge-lifetime { background: #aa88ff15; color: #bb99ff; border: 1px solid #aa88ff30; }
+
+        .actions { display: flex; gap: 6px; }
+
+        .btn-sm {
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-danger { background: #ff444418; color: #ff6666; border: 1px solid #ff444433; }
+        .btn-danger:hover { background: #ff444430; }
+        .btn-warning { background: #ffaa0018; color: #ffcc55; border: 1px solid #ffaa0033; }
+        .btn-warning:hover { background: #ffaa0030; }
+
+        .hwid-text {
+            font-family: monospace;
+            color: #333;
+            font-size: 11px;
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 50px;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .empty-icon { font-size: 36px; margin-bottom: 10px; opacity: 0.3; }
+
+        .creator-badge {
+            font-size: 10px;
+            color: #444;
+            background: rgba(255,255,255,0.03);
+            padding: 2px 7px;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>⚡ VELTRIX</h1>
-        <a href="/logout">Çıkış Yap</a>
+        <div class="header-logo">
+            <div class="icon">⚡</div>
+            <h1>VELTRIX</h1>
+        </div>
+        <div class="header-right">
+            {% if admin_name %}
+            <span class="admin-badge">👤 {{ admin_name }}</span>
+            {% endif %}
+            <a href="/logout" class="logout-btn">Çıkış</a>
+        </div>
     </header>
 
     <div class="main">
-        <!-- İstatistikler -->
+        <!-- Stats -->
         <div class="stats">
             <div class="stat-card">
-                <div class="num">{{ keys|length }}</div>
-                <div class="label">Toplam Key</div>
+                <div class="stat-num">{{ keys|length }}</div>
+                <div class="stat-label">Toplam Key</div>
             </div>
             <div class="stat-card">
-                <div class="num" style="color:#00ff88">{{ keys.values()|selectattr('expired','equalto',false)|list|length }}</div>
-                <div class="label">Aktif Key</div>
+                <div class="stat-num">{{ keys.values()|selectattr('expired','equalto',false)|list|length }}</div>
+                <div class="stat-label">Aktif</div>
             </div>
             <div class="stat-card">
-                <div class="num" style="color:#ff6b6b">{{ keys.values()|selectattr('expired','equalto',true)|list|length }}</div>
-                <div class="label">Süresi Dolmuş</div>
+                <div class="stat-num">{{ keys.values()|selectattr('expired','equalto',true)|list|length }}</div>
+                <div class="stat-label">Süresi Dolmuş</div>
             </div>
             <div class="stat-card">
-                <div class="num" style="color:#aa88ff">{{ keys.values()|selectattr('hwid','ne',none)|list|length }}</div>
-                <div class="label">Kullanılan</div>
+                <div class="stat-num">{{ keys.values()|selectattr('hwid','ne',none)|list|length }}</div>
+                <div class="stat-label">Kullanılan</div>
             </div>
         </div>
 
-        <!-- Key Oluştur -->
+        <!-- Create Key -->
         <div class="create-box">
-            <h2>🔑 YENİ KEY OLUŞTUR</h2>
+            <div class="section-title">🔑 Yeni Key Oluştur</div>
             <form method="POST" action="/create_key">
                 <div class="form-row">
                     <div class="form-group">
-                        <label>SÜRE</label>
+                        <label>Süre</label>
                         <select name="duration">
-                            <option value="1">1 Gün</option>
                             <option value="7">7 Gün</option>
                             <option value="30" selected>30 Gün</option>
                             <option value="90">90 Gün</option>
@@ -161,27 +413,35 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>NOT (opsiyonel)</label>
-                        <input type="text" name="note" placeholder="Kullanıcı adı vb...">
+                        <label>Kullanıcı Adı / Not</label>
+                        <input type="text" name="note" placeholder="örn: Ahmet, discord: xyz...">
                     </div>
-                    <button type="submit" class="btn btn-primary">+ KEY OLUŞTUR</button>
+                    <div class="form-group">
+                        <label>Özel Key Adı (opsiyonel)</label>
+                        <input type="text" name="custom_key" placeholder="örn: VLTX-AHMET-2024">
+                    </div>
+                    <button type="submit" class="btn-create">+ KEY OLUŞTUR</button>
                 </div>
             </form>
         </div>
 
-        <!-- Key Listesi -->
-        <div class="keys-table">
-            <h2>🗂 KEY LİSTESİ</h2>
+        <!-- Keys List -->
+        <div class="keys-section">
+            <div class="keys-header">
+                <div class="section-title" style="margin:0">🗂 Key Listesi</div>
+                <span class="keys-count">{{ keys|length }} key</span>
+            </div>
             {% if keys %}
             <table>
                 <thead>
                     <tr>
-                        <th>KEY</th>
-                        <th>DURUM</th>
-                        <th>BİTİŞ TARİHİ</th>
-                        <th>NOT</th>
+                        <th>Key</th>
+                        <th>Durum</th>
+                        <th>Bitiş</th>
+                        <th>Kullanıcı</th>
                         <th>HWID</th>
-                        <th>İŞLEMLER</th>
+                        <th>Oluşturan</th>
+                        <th>İşlem</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -192,20 +452,31 @@
                             {% if data.expires == 'lifetime' %}
                                 <span class="badge badge-lifetime">ÖMÜR BOYU</span>
                             {% elif data.expired %}
-                                <span class="badge badge-expired">SÜRESİ DOLDU</span>
+                                <span class="badge badge-expired">DOLDU</span>
                             {% else %}
                                 <span class="badge badge-active">AKTİF</span>
                             {% endif %}
                         </td>
-                        <td>{{ data.expires_display }}</td>
-                        <td><span class="note-text" title="{{ data.note }}">{{ data.note or '-' }}</span></td>
-                        <td><span class="hwid-text" title="{{ data.hwid }}">{{ data.hwid[:16] + '...' if data.hwid else 'Henüz kullanılmadı' }}</span></td>
+                        <td style="color:#555;font-size:12px">{{ data.expires_display }}</td>
+                        <td style="color:#777">{{ data.note or '—' }}</td>
+                        <td>
+                            {% if data.hwid %}
+                                <span class="hwid-text" title="{{ data.hwid }}">{{ data.hwid[:14] }}...</span>
+                            {% else %}
+                                <span style="color:#333;font-size:11px">Kullanılmadı</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if data.created_by %}
+                            <span class="creator-badge">{{ data.created_by }}</span>
+                            {% else %}—{% endif %}
+                        </td>
                         <td>
                             <div class="actions">
                                 {% if data.hwid %}
-                                <a href="/reset_hwid/{{ key }}" class="btn btn-warning" style="font-size:12px;padding:6px 12px;">HWID Sıfırla</a>
+                                <a href="/reset_hwid/{{ key }}" class="btn-sm btn-warning">HWID Sıfırla</a>
                                 {% endif %}
-                                <a href="/delete_key/{{ key }}" class="btn btn-danger" style="font-size:12px;padding:6px 12px;" onclick="return confirm('Bu key silinsin mi?')">Sil</a>
+                                <a href="/delete_key/{{ key }}" class="btn-sm btn-danger" onclick="return confirm('Silinsin mi?')">Sil</a>
                             </div>
                         </td>
                     </tr>
@@ -213,7 +484,10 @@
                 </tbody>
             </table>
             {% else %}
-            <div class="empty">Henüz key oluşturulmadı.</div>
+            <div class="empty">
+                <div class="empty-icon">🔑</div>
+                Henüz key oluşturulmadı.
+            </div>
             {% endif %}
         </div>
     </div>
