@@ -161,6 +161,17 @@ def verify():
     elif k['hwid'] != hwid:
         return jsonify({'valid': False, 'message': 'Bu key başka bir bilgisayara kayıtlı!'})
     return jsonify({'valid': True, 'message': 'Hoş geldin!'})
-
+@app.route('/manage')
+def manage():
+    if not session.get('admin'):
+        return redirect(url_for('login'))
+    keys = load_keys()
+    active = sum(1 for v in keys.values() if not v.get('expired', False))
+    stats = {
+        'total_keys': len(keys),
+        'active': active,
+        'used': sum(1 for v in keys.values() if v.get('hwid')),
+    }
+    return render_template('manage.html', admin_name=session.get('admin_name'), stats=stats)
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
