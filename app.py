@@ -218,5 +218,28 @@ def settings():
     if not session.get('admin'):
         return redirect(url_for('login'))
     return render_template('settings.html', admin_name=session.get('admin_name'))
+    @app.route('/change_password', methods=['POST'])
+def change_password():
+    if not session.get('admin'):
+        return redirect(url_for('login'))
+    current = request.form.get('current_password', '')
+    new_pass = request.form.get('new_password', '')
+    confirm = request.form.get('confirm_password', '')
+    admin_name = session.get('admin_name')
+    if admin_name not in ADMINS or ADMINS[admin_name] != current:
+        return render_template('settings.html', admin_name=admin_name, msg='Mevcut şifre yanlış!', success=False)
+    if new_pass != confirm:
+        return render_template('settings.html', admin_name=admin_name, msg='Yeni şifreler eşleşmiyor!', success=False)
+    if len(new_pass) < 6:
+        return render_template('settings.html', admin_name=admin_name, msg='Şifre en az 6 karakter olmalı!', success=False)
+    ADMINS[admin_name] = new_pass
+    return render_template('settings.html', admin_name=admin_name, msg='Şifre başarıyla güncellendi!', success=True)
+
+@app.route('/delete_all')
+def delete_all():
+    if not session.get('admin'):
+        return redirect(url_for('login'))
+    save_keys({})
+    return redirect(url_for('index'))
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
