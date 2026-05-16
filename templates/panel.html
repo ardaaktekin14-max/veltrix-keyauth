@@ -3,493 +3,780 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Veltrix Admin Panel</title>
+    <title>Veltrix Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap');
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background: #070710;
-            color: #fff;
+            background: #0f0f17;
+            color: #c9d1d9;
             font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            display: flex;
             min-height: 100vh;
         }
 
-        /* Animated background */
-        body::before {
-            content: '';
+        /* SIDEBAR */
+        .sidebar {
+            width: 200px;
+            background: #0a0a12;
+            border-right: 1px solid #21213a;
             position: fixed;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(ellipse at 20% 50%, #1e90ff08 0%, transparent 50%),
-                        radial-gradient(ellipse at 80% 20%, #7b2fff08 0%, transparent 50%),
-                        radial-gradient(ellipse at 50% 80%, #00ff8808 0%, transparent 50%);
-            animation: bgPulse 8s ease-in-out infinite alternate;
-            z-index: 0;
-            pointer-events: none;
+            top: 0; left: 0; bottom: 0;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
         }
 
-        @keyframes bgPulse {
-            0% { transform: rotate(0deg) scale(1); }
-            100% { transform: rotate(3deg) scale(1.05); }
-        }
-
-        header {
-            position: relative;
-            z-index: 10;
-            background: rgba(10, 10, 20, 0.9);
-            border-bottom: 1px solid #1e90ff22;
-            padding: 0 30px;
-            height: 60px;
+        .sidebar-logo {
+            padding: 14px 16px;
+            border-bottom: 1px solid #21213a;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            backdrop-filter: blur(20px);
+            gap: 8px;
         }
 
-        .header-logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .header-logo .icon {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #1e90ff, #7b2fff);
-            border-radius: 8px;
+        .logo-icon {
+            width: 26px; height: 26px;
+            background: #3b5bdb;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
-        }
-
-        .header-logo h1 {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 22px;
-            font-weight: 700;
-            color: #fff;
-            letter-spacing: 3px;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .admin-badge {
-            background: #1e90ff15;
-            border: 1px solid #1e90ff33;
-            color: #1e90ff;
-            padding: 5px 12px;
-            border-radius: 20px;
             font-size: 12px;
-            font-weight: 500;
+            font-weight: 800;
+            color: #fff;
+            flex-shrink: 0;
         }
 
-        .logout-btn {
-            color: #ff4444;
-            text-decoration: none;
-            font-size: 13px;
-            padding: 6px 14px;
-            border: 1px solid #ff444433;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-
-        .logout-btn:hover {
-            background: #ff444415;
-            border-color: #ff444466;
-        }
-
-        .main {
-            position: relative;
-            z-index: 1;
-            padding: 28px 30px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* Stats */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .stat-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 12px;
-            padding: 20px 22px;
-            position: relative;
-            overflow: hidden;
-            transition: border-color 0.3s;
-        }
-
-        .stat-card:hover { border-color: rgba(255,255,255,0.12); }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 2px;
-        }
-
-        .stat-card:nth-child(1)::before { background: linear-gradient(90deg, #1e90ff, transparent); }
-        .stat-card:nth-child(2)::before { background: linear-gradient(90deg, #00ff88, transparent); }
-        .stat-card:nth-child(3)::before { background: linear-gradient(90deg, #ff4444, transparent); }
-        .stat-card:nth-child(4)::before { background: linear-gradient(90deg, #aa88ff, transparent); }
-
-        .stat-num {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 36px;
-            font-weight: 700;
-            line-height: 1;
-            margin-bottom: 6px;
-        }
-
-        .stat-card:nth-child(1) .stat-num { color: #1e90ff; }
-        .stat-card:nth-child(2) .stat-num { color: #00ff88; }
-        .stat-card:nth-child(3) .stat-num { color: #ff4444; }
-        .stat-card:nth-child(4) .stat-num { color: #aa88ff; }
-
-        .stat-label { font-size: 12px; color: #555; font-weight: 500; letter-spacing: 0.5px; }
-
-        /* Create box */
-        .create-box {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 14px;
-            padding: 22px 24px;
-            margin-bottom: 24px;
-        }
-
-        .section-title {
-            font-family: 'Rajdhani', sans-serif;
+        .logo-name {
             font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 2px;
-            color: #888;
-            margin-bottom: 16px;
-            text-transform: uppercase;
+            font-weight: 700;
+            color: #e6edf3;
+            letter-spacing: 1px;
         }
 
-        .form-row {
-            display: flex;
-            gap: 12px;
-            align-items: flex-end;
-            flex-wrap: wrap;
+        .sidebar-app {
+            padding: 10px 12px;
+            border-bottom: 1px solid #21213a;
         }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .form-group label {
-            font-size: 11px;
-            color: #555;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        select, input[type="text"] {
-            padding: 9px 13px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 8px;
-            color: #ccc;
-            font-size: 13px;
-            outline: none;
-            transition: all 0.2s;
-            font-family: 'Inter', sans-serif;
-        }
-
-        select:focus, input[type="text"]:focus {
-            border-color: #1e90ff55;
-            background: rgba(30,144,255,0.05);
-            color: #fff;
-        }
-
-        select option { background: #1a1a2e; }
-
-        .btn-create {
-            padding: 9px 20px;
-            background: linear-gradient(135deg, #1e90ff, #0066cc);
-            border: none;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            letter-spacing: 0.5px;
-            transition: all 0.2s;
-            white-space: nowrap;
-            font-family: 'Inter', sans-serif;
-            box-shadow: 0 4px 15px #1e90ff22;
-        }
-
-        .btn-create:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px #1e90ff44;
-        }
-
-        /* Keys table */
-        .keys-section {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 14px;
-            overflow: hidden;
-        }
-
-        .keys-header {
-            padding: 16px 24px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+        .app-selector {
+            background: #13131f;
+            border: 1px solid #21213a;
+            border-radius: 6px;
+            padding: 7px 10px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            cursor: pointer;
         }
 
-        .keys-count {
-            font-size: 12px;
-            color: #444;
+        .app-name { font-size: 12px; color: #8b949e; }
+        .app-arrow { color: #8b949e; font-size: 10px; }
+
+        .sidebar-nav { padding: 8px 0; flex: 1; }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 7px 16px;
+            color: #8b949e;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.15s;
+            position: relative;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        .nav-item:hover { color: #e6edf3; background: #13131f; }
+
+        .nav-item.active {
+            color: #e6edf3;
+            background: #13131f;
         }
 
-        th {
-            padding: 11px 18px;
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 3px;
+            background: #3b5bdb;
+            border-radius: 0 2px 2px 0;
+        }
+
+        .nav-icon { font-size: 13px; width: 16px; text-align: center; }
+
+        .nav-badge {
+            margin-left: auto;
+            background: #21213a;
+            color: #8b949e;
+            font-size: 10px;
+            padding: 1px 6px;
+            border-radius: 10px;
+        }
+
+        .nav-section {
+            padding: 12px 16px 4px;
             font-size: 10px;
             font-weight: 600;
-            color: #444;
+            color: #30363d;
             letter-spacing: 1px;
             text-transform: uppercase;
-            text-align: left;
-            background: rgba(255,255,255,0.01);
-            border-bottom: 1px solid rgba(255,255,255,0.04);
         }
 
-        td {
-            padding: 13px 18px;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
-            font-size: 13px;
-            color: #aaa;
+        .sidebar-bottom {
+            padding: 10px 12px;
+            border-top: 1px solid #21213a;
         }
 
-        tr:last-child td { border-bottom: none; }
-
-        tr:hover td { background: rgba(255,255,255,0.02); }
-
-        .key-text {
-            font-family: 'Courier New', monospace;
-            color: #1e90ff;
-            font-size: 12px;
-            background: #1e90ff0d;
-            padding: 4px 10px;
-            border-radius: 5px;
-            border: 1px solid #1e90ff22;
-            user-select: all;
+        .user-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .badge {
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        .badge-active { background: #00ff8815; color: #00ff88; border: 1px solid #00ff8830; }
-        .badge-expired { background: #ff444415; color: #ff6666; border: 1px solid #ff444430; }
-        .badge-lifetime { background: #aa88ff15; color: #bb99ff; border: 1px solid #aa88ff30; }
-
-        .actions { display: flex; gap: 6px; }
-
-        .btn-sm {
-            padding: 5px 12px;
-            border-radius: 6px;
+        .user-avatar {
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b5bdb, #7048e8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 11px;
-            font-weight: 500;
-            cursor: pointer;
-            border: none;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .user-info { flex: 1; min-width: 0; }
+        .user-name { font-size: 12px; font-weight: 600; color: #e6edf3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .user-role { font-size: 10px; color: #8b949e; }
+
+        .logout-icon {
+            color: #8b949e;
             text-decoration: none;
-            display: inline-block;
-            transition: all 0.2s;
-            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            padding: 4px;
+            transition: color 0.15s;
         }
 
-        .btn-danger { background: #ff444418; color: #ff6666; border: 1px solid #ff444433; }
-        .btn-danger:hover { background: #ff444430; }
-        .btn-warning { background: #ffaa0018; color: #ffcc55; border: 1px solid #ffaa0033; }
-        .btn-warning:hover { background: #ffaa0030; }
+        .logout-icon:hover { color: #f85149; }
 
-        .hwid-text {
-            font-family: monospace;
-            color: #333;
-            font-size: 11px;
-            max-width: 100px;
+        /* MAIN */
+        .main {
+            margin-left: 200px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* TOPBAR */
+        .topbar {
+            height: 48px;
+            background: #0a0a12;
+            border-bottom: 1px solid #21213a;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #8b949e;
+        }
+
+        .breadcrumb a { color: #8b949e; text-decoration: none; }
+        .breadcrumb a:hover { color: #e6edf3; }
+        .breadcrumb span { color: #e6edf3; font-weight: 500; }
+        .breadcrumb-sep { color: #30363d; }
+
+        .upgrade-btn {
+            font-size: 12px;
+            color: #f85149;
+            background: rgba(248,81,73,0.1);
+            border: 1px solid rgba(248,81,73,0.2);
+            border-radius: 5px;
+            padding: 4px 10px;
+            text-decoration: none;
+        }
+
+        /* PAGE */
+        .page { padding: 20px; flex: 1; }
+
+        .page-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #e6edf3;
+            margin-bottom: 3px;
+        }
+
+        .page-desc {
+            font-size: 12px;
+            color: #8b949e;
+            margin-bottom: 20px;
+        }
+
+        /* STATS */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: #21213a;
+            border: 1px solid #21213a;
+            border-radius: 8px;
             overflow: hidden;
-            text-overflow: ellipsis;
+            margin-bottom: 20px;
+        }
+
+        .stat {
+            background: #0f0f17;
+            padding: 18px 20px;
+            text-align: center;
+        }
+
+        .stat-num {
+            font-size: 28px;
+            font-weight: 700;
+            color: #e6edf3;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .stat-lbl {
+            font-size: 12px;
+            color: #8b949e;
+        }
+
+        /* TABLE SECTION */
+        .section {
+            background: #0f0f17;
+            border: 1px solid #21213a;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid #21213a;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e6edf3;
+        }
+
+        .search-box {
+            background: #13131f;
+            border: 1px solid #21213a;
+            border-radius: 6px;
+            color: #e6edf3;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            padding: 6px 12px;
+            outline: none;
+            width: 200px;
+            transition: border-color 0.2s;
+        }
+
+        .search-box:focus { border-color: #3b5bdb; }
+        .search-box::placeholder { color: #30363d; }
+
+        .header-btns { display: flex; gap: 6px; align-items: center; }
+
+        .icon-btn {
+            width: 28px; height: 28px;
+            background: #13131f;
+            border: 1px solid #21213a;
+            border-radius: 5px;
+            color: #8b949e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.15s;
+        }
+
+        .icon-btn:hover { border-color: #3b5bdb; color: #3b5bdb; }
+
+        .create-btn {
+            background: #3b5bdb;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.15s;
             white-space: nowrap;
         }
 
-        .empty {
-            text-align: center;
-            padding: 50px;
-            color: #333;
-            font-size: 14px;
+        .create-btn:hover { background: #4c6ef5; }
+
+        /* SELECT ALL */
+        .select-all-row {
+            padding: 8px 16px;
+            border-bottom: 1px solid #21213a;
         }
 
-        .empty-icon { font-size: 36px; margin-bottom: 10px; opacity: 0.3; }
+        .select-all-btn {
+            font-size: 12px;
+            color: #8b949e;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+        }
 
-        .creator-badge {
-            font-size: 10px;
-            color: #444;
-            background: rgba(255,255,255,0.03);
-            padding: 2px 7px;
+        table { width: 100%; border-collapse: collapse; }
+
+        th {
+            padding: 8px 14px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #8b949e;
+            text-align: left;
+            background: #0a0a12;
+            border-bottom: 1px solid #21213a;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #8b949e;
+            border-bottom: 1px solid #21213a;
+            vertical-align: middle;
+        }
+
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover td { background: #13131f; }
+
+        .key-text {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #79c0ff;
+            cursor: pointer;
+        }
+
+        .key-text:hover { text-decoration: underline; }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .badge-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+        .badge-active { background: rgba(63,185,80,0.15); color: #3fb950; }
+        .badge-active .badge-dot { background: #3fb950; }
+        .badge-expired { background: rgba(248,81,73,0.15); color: #f85149; }
+        .badge-expired .badge-dot { background: #f85149; }
+        .badge-lifetime { background: rgba(188,140,255,0.15); color: #bc8cff; }
+        .badge-lifetime .badge-dot { background: #bc8cff; }
+
+        .row-btns { display: flex; gap: 5px; }
+
+        .row-btn {
+            padding: 3px 9px;
             border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-family: 'Inter', sans-serif;
+            border: none;
+            transition: all 0.15s;
         }
+
+        .btn-green { background: rgba(63,185,80,0.15); color: #3fb950; border: 1px solid rgba(63,185,80,0.2); }
+        .btn-green:hover { background: rgba(63,185,80,0.25); }
+        .btn-purple { background: rgba(188,140,255,0.15); color: #bc8cff; border: 1px solid rgba(188,140,255,0.2); }
+        .btn-purple:hover { background: rgba(188,140,255,0.25); }
+        .btn-red { background: rgba(248,81,73,0.15); color: #f85149; border: 1px solid rgba(248,81,73,0.2); }
+        .btn-red:hover { background: rgba(248,81,73,0.25); }
+
+        /* TABLE FOOTER */
+        .table-footer {
+            padding: 10px 16px;
+            border-top: 1px solid #21213a;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #8b949e;
+        }
+
+        .empty {
+            padding: 50px;
+            text-align: center;
+            color: #30363d;
+        }
+
+        .empty-icon { font-size: 32px; margin-bottom: 10px; }
+
+        /* MODAL */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 500;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.show { display: flex; }
+
+        .modal {
+            background: #161b22;
+            border: 1px solid #21213a;
+            border-radius: 10px;
+            width: 460px;
+            padding: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #e6edf3;
+            margin-bottom: 20px;
+        }
+
+        .modal-field {
+            margin-bottom: 16px;
+        }
+
+        .modal-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #8b949e;
+            margin-bottom: 6px;
+        }
+
+        .required { color: #f85149; }
+
+        .modal-input, .modal-select {
+            width: 100%;
+            background: #0d1117;
+            border: 1px solid #21213a;
+            border-radius: 6px;
+            color: #e6edf3;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            padding: 8px 12px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .modal-input:focus, .modal-select:focus { border-color: #3b5bdb; }
+        .modal-input::placeholder { color: #30363d; }
+        .modal-select option { background: #161b22; }
+
+        .modal-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            border: 1px solid #21213a;
+            border-radius: 6px;
+            color: #8b949e;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 7px 16px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-cancel:hover { border-color: #8b949e; color: #e6edf3; }
+
+        .btn-submit {
+            background: #3b5bdb;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 7px 20px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .btn-submit:hover { background: #4c6ef5; }
     </style>
 </head>
 <body>
-    <header>
-        <div class="header-logo">
-            <div class="icon">⚡</div>
-            <h1>VELTRIX</h1>
-        </div>
-        <div class="header-right">
-            {% if admin_name %}
-            <span class="admin-badge">👤 {{ admin_name }}</span>
-            {% endif %}
-            <a href="/logout" class="logout-btn">Çıkış</a>
-        </div>
-    </header>
 
-    <div class="main">
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-icon">V</div>
+        <span class="logo-name">VELTRIX</span>
+    </div>
+
+    <div class="sidebar-app">
+        <div class="app-selector">
+            <span class="app-name">{{ admin_name or 'Admin' }}'s App</span>
+            <span class="app-arrow">▾</span>
+        </div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <div class="nav-section">Manage Apps</div>
+        <div class="nav-item active">
+            <span class="nav-icon">🔑</span> Licenses
+        </div>
+        <div class="nav-item">
+            <span class="nav-icon">👤</span> Users
+            <span class="nav-badge">0</span>
+        </div>
+        <div class="nav-item">
+            <span class="nav-icon">🪙</span> Tokens
+        </div>
+        <div class="nav-section">System</div>
+        <div class="nav-item">
+            <span class="nav-icon">📋</span> Event Logs
+        </div>
+        <div class="nav-item">
+            <span class="nav-icon">⚙️</span> Settings
+        </div>
+    </nav>
+
+    <div class="sidebar-bottom">
+        <div class="user-row">
+            <div class="user-avatar">{{ admin_name[0] if admin_name else 'A' }}</div>
+            <div class="user-info">
+                <div class="user-name">{{ admin_name or 'Admin' }}</div>
+                <div class="user-role">Administrator</div>
+            </div>
+            <a href="/logout" class="logout-icon" title="Çıkış">⏻</a>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+    <div class="topbar">
+        <div class="breadcrumb">
+            <a href="#">Veltrix Panel</a>
+            <span class="breadcrumb-sep">›</span>
+            <span>Licenses</span>
+        </div>
+    </div>
+
+    <div class="page">
+        <div class="page-title">Licenses</div>
+        <div class="page-desc">Manage your application licenses here.</div>
+
         <!-- Stats -->
         <div class="stats">
-            <div class="stat-card">
+            <div class="stat">
                 <div class="stat-num">{{ keys|length }}</div>
-                <div class="stat-label">Toplam Key</div>
+                <div class="stat-lbl">Total Keys</div>
             </div>
-            <div class="stat-card">
+            <div class="stat">
                 <div class="stat-num">{{ keys.values()|selectattr('expired','equalto',false)|list|length }}</div>
-                <div class="stat-label">Aktif</div>
+                <div class="stat-lbl">Active</div>
             </div>
-            <div class="stat-card">
+            <div class="stat">
                 <div class="stat-num">{{ keys.values()|selectattr('expired','equalto',true)|list|length }}</div>
-                <div class="stat-label">Süresi Dolmuş</div>
+                <div class="stat-lbl">Expired</div>
             </div>
-            <div class="stat-card">
+            <div class="stat">
                 <div class="stat-num">{{ keys.values()|selectattr('hwid','ne',none)|list|length }}</div>
-                <div class="stat-label">Kullanılan</div>
+                <div class="stat-lbl">Used</div>
             </div>
         </div>
 
-        <!-- Create Key -->
-        <div class="create-box">
-            <div class="section-title">🔑 Yeni Key Oluştur</div>
-            <form method="POST" action="/create_key">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Süre</label>
-                        <select name="duration">
-                            <option value="7">7 Gün</option>
-                            <option value="30" selected>30 Gün</option>
-                            <option value="90">90 Gün</option>
-                            <option value="365">1 Yıl</option>
-                            <option value="lifetime">Ömür Boyu</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Kullanıcı Adı / Not</label>
-                        <input type="text" name="note" placeholder="örn: Ahmet, discord: xyz...">
-                    </div>
-                    <div class="form-group">
-                        <label>Özel Key Adı (opsiyonel)</label>
-                        <input type="text" name="custom_key" placeholder="örn: VLTX-AHMET-2024">
-                    </div>
-                    <button type="submit" class="btn-create">+ KEY OLUŞTUR</button>
+        <!-- Table -->
+        <div class="section">
+            <div class="section-header">
+                <input class="search-box" type="text" id="searchInput" placeholder="Search licenses...">
+                <div class="header-btns">
+                    <div class="icon-btn" title="Filter">⚙</div>
+                    <div class="icon-btn" title="Grid">▦</div>
+                    <div class="icon-btn" title="Refresh" onclick="location.reload()">↺</div>
+                    <div class="icon-btn" title="Delete">🗑</div>
+                    <button class="create-btn" onclick="document.getElementById('modal').classList.add('show')">
+                        + Create License
+                    </button>
                 </div>
-            </form>
-        </div>
-
-        <!-- Keys List -->
-        <div class="keys-section">
-            <div class="keys-header">
-                <div class="section-title" style="margin:0">🗂 Key Listesi</div>
-                <span class="keys-count">{{ keys|length }} key</span>
             </div>
+
+            <div class="select-all-row">
+                <button class="select-all-btn">Select All</button>
+            </div>
+
             {% if keys %}
-            <table>
+            <table id="keysTable">
                 <thead>
                     <tr>
-                        <th>Key</th>
-                        <th>Durum</th>
-                        <th>Bitiş</th>
-                        <th>Kullanıcı</th>
+                        <th>License Key</th>
+                        <th>Status</th>
+                        <th>Expiry Date</th>
+                        <th>Note</th>
                         <th>HWID</th>
-                        <th>Oluşturan</th>
-                        <th>İşlem</th>
+                        <th>Created By</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for key, data in keys.items() %}
                     <tr>
-                        <td><span class="key-text">{{ key }}</span></td>
+                        <td>
+                            <span class="key-text" onclick="copyKey(this,'{{ key }}')" title="Click to copy">{{ key }}</span>
+                        </td>
                         <td>
                             {% if data.expires == 'lifetime' %}
-                                <span class="badge badge-lifetime">ÖMÜR BOYU</span>
+                                <span class="badge badge-lifetime"><span class="badge-dot"></span>Lifetime</span>
                             {% elif data.expired %}
-                                <span class="badge badge-expired">DOLDU</span>
+                                <span class="badge badge-expired"><span class="badge-dot"></span>Expired</span>
                             {% else %}
-                                <span class="badge badge-active">AKTİF</span>
+                                <span class="badge badge-active"><span class="badge-dot"></span>Active</span>
                             {% endif %}
                         </td>
-                        <td style="color:#555;font-size:12px">{{ data.expires_display }}</td>
-                        <td style="color:#777">{{ data.note or '—' }}</td>
+                        <td>{{ data.expires_display }}</td>
+                        <td>{{ data.note or '—' }}</td>
                         <td>
                             {% if data.hwid %}
-                                <span class="hwid-text" title="{{ data.hwid }}">{{ data.hwid[:14] }}...</span>
-                            {% else %}
-                                <span style="color:#333;font-size:11px">Kullanılmadı</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if data.created_by %}
-                            <span class="creator-badge">{{ data.created_by }}</span>
+                                <span style="font-family:monospace;font-size:11px" title="{{ data.hwid }}">{{ data.hwid[:12] }}...</span>
                             {% else %}—{% endif %}
                         </td>
+                        <td>{{ data.created_by or '—' }}</td>
                         <td>
-                            <div class="actions">
+                            <div class="row-btns">
                                 {% if data.hwid %}
-                                <a href="/reset_hwid/{{ key }}" class="btn-sm btn-warning">HWID Sıfırla</a>
+                                <a href="/reset_hwid/{{ key }}" class="row-btn btn-purple">Reset HWID</a>
                                 {% endif %}
-                                <a href="/delete_key/{{ key }}" class="btn-sm btn-danger" onclick="return confirm('Silinsin mi?')">Sil</a>
+                                <a href="/delete_key/{{ key }}" class="row-btn btn-red" onclick="return confirm('Delete this key?')">Delete</a>
                             </div>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
+            <div class="table-footer">
+                <span>Previous</span>
+                <span>Total {{ keys|length }} licenses</span>
+                <span>Next</span>
+            </div>
             {% else %}
             <div class="empty">
                 <div class="empty-icon">🔑</div>
-                Henüz key oluşturulmadı.
+                Get started by creating your first license.
+                <br><br>
+                <button class="create-btn" style="margin:0 auto" onclick="document.getElementById('modal').classList.add('show')">
+                    + Create License
+                </button>
             </div>
             {% endif %}
         </div>
     </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+    <div class="modal">
+        <div class="modal-title">Create a new license</div>
+        <form method="POST" action="/create_key">
+            <div class="modal-field">
+                <div class="modal-label">License Amount <span class="required">*</span></div>
+                <input class="modal-input" type="text" value="1" readonly style="color:#8b949e">
+            </div>
+            <div class="modal-field">
+                <div class="modal-label">Note (Kullanıcı Adı)</div>
+                <input class="modal-input" type="text" name="note" placeholder="Discord: xyz#1234, kullanıcı adı...">
+            </div>
+            <div class="modal-field">
+                <div class="modal-label">Custom Key (opsiyonel)</div>
+                <input class="modal-input" type="text" name="custom_key" placeholder="VLTX-ÖZEL-KEY">
+            </div>
+            <div class="modal-row">
+                <div class="modal-field">
+                    <div class="modal-label">Expiry Unit <span class="required">*</span></div>
+                    <select class="modal-select" name="duration">
+                        <option value="7">7 Days</option>
+                        <option value="30" selected>30 Days</option>
+                        <option value="90">90 Days</option>
+                        <option value="365">1 Year</option>
+                        <option value="lifetime">Lifetime</option>
+                    </select>
+                </div>
+                <div class="modal-field">
+                    <div class="modal-label">Expiry Duration <span class="required">*</span></div>
+                    <input class="modal-input" type="text" placeholder="Auto" readonly style="color:#8b949e">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="document.getElementById('modal').classList.remove('show')">Cancel</button>
+                <button type="submit" class="btn-submit">Create License</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function copyKey(el, key) {
+    navigator.clipboard.writeText(key);
+    const orig = el.textContent;
+    el.textContent = '✓ Copied!';
+    el.style.color = '#3fb950';
+    setTimeout(() => { el.textContent = orig; el.style.color = ''; }, 1500);
+}
+
+document.getElementById('searchInput')?.addEventListener('input', function() {
+    const q = this.value.toLowerCase();
+    document.querySelectorAll('#keysTable tbody tr').forEach(row => {
+        row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+});
+
+document.getElementById('modal')?.addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('show');
+});
+</script>
 </body>
 </html>
