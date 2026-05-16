@@ -173,5 +173,22 @@ def manage():
         'used': sum(1 for v in keys.values() if v.get('hwid')),
     }
     return render_template('manage.html', admin_name=session.get('admin_name'), stats=stats)
+    @app.route('/users')
+def users():
+    if not session.get('admin'):
+        return redirect(url_for('login'))
+    keys = load_keys()
+    user_list = []
+    for key, data in keys.items():
+        if data.get('hwid'):
+            user_list.append({
+                'key': key,
+                'hwid': data['hwid'],
+                'note': data.get('note', '—'),
+                'created': data.get('created', '—'),
+                'expires': data.get('expires_display', '—'),
+                'created_by': data.get('created_by', '—')
+            })
+    return render_template('users.html', admin_name=session.get('admin_name'), users=user_list)
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
