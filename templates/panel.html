@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veltrix Admin Panel</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0a0f;
+            color: #fff;
+            font-family: 'Segoe UI', sans-serif;
+            min-height: 100vh;
+        }
+        header {
+            background: #12121a;
+            border-bottom: 1px solid #1e90ff33;
+            padding: 16px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        header h1 { color: #1e90ff; font-size: 22px; letter-spacing: 3px; text-shadow: 0 0 15px #1e90ff; }
+        header a { color: #555; text-decoration: none; font-size: 13px; transition: color 0.2s; }
+        header a:hover { color: #ff4444; }
+        .main { padding: 30px; }
+        .create-box {
+            background: #12121a;
+            border: 1px solid #1e90ff33;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+        .create-box h2 { color: #1e90ff; margin-bottom: 18px; font-size: 16px; letter-spacing: 1px; }
+        .form-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { color: #888; font-size: 12px; }
+        select, input[type="text"] {
+            padding: 10px 14px;
+            background: #1a1a25;
+            border: 1px solid #1e90ff33;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: border 0.3s;
+        }
+        select:focus, input[type="text"]:focus { border-color: #1e90ff; }
+        .btn {
+            padding: 10px 22px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+        .btn:hover { opacity: 0.8; }
+        .btn-primary { background: linear-gradient(135deg, #1e90ff, #0066cc); color: #fff; }
+        .btn-danger { background: #ff3b3b22; color: #ff6b6b; border: 1px solid #ff3b3b44; }
+        .btn-warning { background: #ffaa0022; color: #ffcc44; border: 1px solid #ffaa0044; }
+        .stats {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .stat-card {
+            background: #12121a;
+            border: 1px solid #1e90ff22;
+            border-radius: 10px;
+            padding: 16px 24px;
+            flex: 1;
+            min-width: 140px;
+        }
+        .stat-card .num { font-size: 28px; font-weight: bold; color: #1e90ff; }
+        .stat-card .label { font-size: 12px; color: #555; margin-top: 4px; }
+        .keys-table {
+            background: #12121a;
+            border: 1px solid #1e90ff22;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .keys-table h2 { color: #1e90ff; font-size: 16px; letter-spacing: 1px; padding: 18px 24px; border-bottom: 1px solid #1e90ff22; }
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            background: #0f0f18;
+            color: #555;
+            font-size: 11px;
+            letter-spacing: 1px;
+            padding: 12px 16px;
+            text-align: left;
+        }
+        td { padding: 12px 16px; border-bottom: 1px solid #ffffff08; font-size: 13px; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #ffffff04; }
+        .key-text {
+            font-family: monospace;
+            color: #1e90ff;
+            font-size: 13px;
+            background: #1e90ff11;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .badge {
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .badge-active { background: #00ff8822; color: #00ff88; }
+        .badge-expired { background: #ff3b3b22; color: #ff6b6b; }
+        .badge-lifetime { background: #aa88ff22; color: #aa88ff; }
+        .actions { display: flex; gap: 8px; }
+        .empty { text-align: center; color: #333; padding: 40px; font-size: 14px; }
+        .note-text { color: #666; font-size: 12px; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .hwid-text { font-family: monospace; color: #444; font-size: 11px; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>⚡ VELTRIX</h1>
+        <a href="/logout">Çıkış Yap</a>
+    </header>
+
+    <div class="main">
+        <!-- İstatistikler -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="num">{{ keys|length }}</div>
+                <div class="label">Toplam Key</div>
+            </div>
+            <div class="stat-card">
+                <div class="num" style="color:#00ff88">{{ keys.values()|selectattr('expired','equalto',false)|list|length }}</div>
+                <div class="label">Aktif Key</div>
+            </div>
+            <div class="stat-card">
+                <div class="num" style="color:#ff6b6b">{{ keys.values()|selectattr('expired','equalto',true)|list|length }}</div>
+                <div class="label">Süresi Dolmuş</div>
+            </div>
+            <div class="stat-card">
+                <div class="num" style="color:#aa88ff">{{ keys.values()|selectattr('hwid','ne',none)|list|length }}</div>
+                <div class="label">Kullanılan</div>
+            </div>
+        </div>
+
+        <!-- Key Oluştur -->
+        <div class="create-box">
+            <h2>🔑 YENİ KEY OLUŞTUR</h2>
+            <form method="POST" action="/create_key">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>SÜRE</label>
+                        <select name="duration">
+                            <option value="1">1 Gün</option>
+                            <option value="7">7 Gün</option>
+                            <option value="30" selected>30 Gün</option>
+                            <option value="90">90 Gün</option>
+                            <option value="365">1 Yıl</option>
+                            <option value="lifetime">Ömür Boyu</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>NOT (opsiyonel)</label>
+                        <input type="text" name="note" placeholder="Kullanıcı adı vb...">
+                    </div>
+                    <button type="submit" class="btn btn-primary">+ KEY OLUŞTUR</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Key Listesi -->
+        <div class="keys-table">
+            <h2>🗂 KEY LİSTESİ</h2>
+            {% if keys %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>KEY</th>
+                        <th>DURUM</th>
+                        <th>BİTİŞ TARİHİ</th>
+                        <th>NOT</th>
+                        <th>HWID</th>
+                        <th>İŞLEMLER</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, data in keys.items() %}
+                    <tr>
+                        <td><span class="key-text">{{ key }}</span></td>
+                        <td>
+                            {% if data.expires == 'lifetime' %}
+                                <span class="badge badge-lifetime">ÖMÜR BOYU</span>
+                            {% elif data.expired %}
+                                <span class="badge badge-expired">SÜRESİ DOLDU</span>
+                            {% else %}
+                                <span class="badge badge-active">AKTİF</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ data.expires_display }}</td>
+                        <td><span class="note-text" title="{{ data.note }}">{{ data.note or '-' }}</span></td>
+                        <td><span class="hwid-text" title="{{ data.hwid }}">{{ data.hwid[:16] + '...' if data.hwid else 'Henüz kullanılmadı' }}</span></td>
+                        <td>
+                            <div class="actions">
+                                {% if data.hwid %}
+                                <a href="/reset_hwid/{{ key }}" class="btn btn-warning" style="font-size:12px;padding:6px 12px;">HWID Sıfırla</a>
+                                {% endif %}
+                                <a href="/delete_key/{{ key }}" class="btn btn-danger" style="font-size:12px;padding:6px 12px;" onclick="return confirm('Bu key silinsin mi?')">Sil</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty">Henüz key oluşturulmadı.</div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
