@@ -5,18 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Veltrix Admin - Giriş</title>
     <style>
-        .watermark-hide {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    width: 220px;
-    height: 60px;
-    background: #050000;
-    z-index: 999;
-}
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            background: #050000;
+            background: #0a0a0f;
             color: #fff;
             font-family: 'Segoe UI', sans-serif;
             display: flex;
@@ -25,68 +17,62 @@
             min-height: 100vh;
             overflow: hidden;
         }
-        .video-bg {
+
+        canvas {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: 0;
         }
-        .video-bg video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0.85;
-        }
-        .overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.45);
-            z-index: 1;
-        }
+
         .container {
             position: relative;
-            z-index: 2;
-            background: rgba(8, 3, 0, 0.78);
-            border: 1px solid #ff6a0066;
+            z-index: 1;
+            background: rgba(18, 18, 26, 0.85);
+            border: 1px solid #1e90ff44;
             border-radius: 16px;
             padding: 44px 40px;
             width: 380px;
-            box-shadow: 0 0 60px #ff450022, 0 0 120px #ff220011;
+            box-shadow: 0 0 60px #1e90ff22, 0 0 120px #1e90ff11;
             backdrop-filter: blur(12px);
         }
+
         .logo {
             text-align: center;
             margin-bottom: 32px;
         }
+
         .logo h1 {
             font-size: 30px;
-            color: #ff8c00;
+            color: #1e90ff;
             letter-spacing: 6px;
-            text-shadow: 0 0 30px #ff4500, 0 0 60px #ff220055;
+            text-shadow: 0 0 30px #1e90ff, 0 0 60px #1e90ff55;
         }
-        .logo p { color: #884400; font-size: 12px; margin-top: 6px; letter-spacing: 2px; }
+
+        .logo p { color: #444; font-size: 12px; margin-top: 6px; letter-spacing: 2px; }
+
         input {
             width: 100%;
             padding: 13px 16px;
-            background: rgba(20, 8, 0, 0.85);
-            border: 1px solid #ff6a0033;
+            background: rgba(26, 26, 37, 0.9);
+            border: 1px solid #1e90ff33;
             border-radius: 8px;
-            color: #ffcc99;
+            color: #fff;
             font-size: 14px;
             margin-bottom: 14px;
             outline: none;
             transition: border 0.3s, box-shadow 0.3s;
         }
-        input::placeholder { color: #664400; }
+
         input:focus {
-            border-color: #ff6a00;
-            box-shadow: 0 0 15px #ff450033;
+            border-color: #1e90ff;
+            box-shadow: 0 0 15px #1e90ff22;
         }
+
         button {
             width: 100%;
             padding: 13px;
-            background: linear-gradient(135deg, #ff6a00, #cc3300);
+            background: linear-gradient(135deg, #1e90ff, #0055bb);
             border: none;
             border-radius: 8px;
             color: #fff;
@@ -95,16 +81,18 @@
             cursor: pointer;
             letter-spacing: 2px;
             transition: opacity 0.3s, box-shadow 0.3s;
-            box-shadow: 0 0 20px #ff450033;
+            box-shadow: 0 0 20px #1e90ff33;
         }
+
         button:hover {
             opacity: 0.85;
-            box-shadow: 0 0 35px #ff450066;
+            box-shadow: 0 0 30px #1e90ff55;
         }
+
         .error {
             background: #ff3b3b15;
             border: 1px solid #ff3b3b44;
-            color: #ff9966;
+            color: #ff6b6b;
             padding: 10px 14px;
             border-radius: 8px;
             margin-bottom: 14px;
@@ -113,28 +101,90 @@
     </style>
 </head>
 <body>
+    <canvas id="stars"></canvas>
 
-<div class="video-bg">
-    <video autoplay muted loop playsinline>
-        <source src="https://i.makeagif.com/media/1-28-2023/HftgKb.mp4" type="video/mp4">
-    </video>
-</div>
-<div class="overlay"></div>
-
-<div class="container">
-    <div class="logo">
-        <h1>VELTRIX</h1>
-        <p>ADMIN PANEL</p>
+    <div class="container">
+        <div class="logo">
+            <h1>VELTRIX</h1>
+            <p>ADMIN PANEL</p>
+        </div>
+        {% if error %}
+        <div class="error">⚠ {{ error }}</div>
+        {% endif %}
+        <form method="POST">
+            <input type="text" name="username" placeholder="Kullanıcı Adı" autofocus required>
+            <input type="password" name="password" placeholder="Şifre" required>
+            <button type="submit">GİRİŞ YAP</button>
+        </form>
     </div>
-    {% if error %}
-    <div class="error">⚠ {{ error }}</div>
-    {% endif %}
-    <form method="POST">
-        <input type="text" name="username" placeholder="Kullanıcı Adı" autofocus required>
-        <input type="password" name="password" placeholder="Şifre" required>
-        <button type="submit">GİRİŞ YAP</button>
-    </form>
-</div>
-<div class="watermark-hide"></div>
+
+    <script>
+        const canvas = document.getElementById('stars');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initStars();
+        });
+
+        const STAR_COUNT = 180;
+        let stars = [];
+
+        function initStars() {
+            stars = [];
+            for (let i = 0; i < STAR_COUNT; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    r: Math.random() * 1.5 + 0.3,
+                    speed: Math.random() * 0.4 + 0.1,
+                    opacity: Math.random() * 0.8 + 0.2,
+                    twinkle: Math.random() * Math.PI * 2,
+                    twinkleSpeed: Math.random() * 0.02 + 0.005,
+                    color: Math.random() > 0.85 ? '#88ccff' : '#ffffff'
+                });
+            }
+        }
+
+        function drawStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            stars.forEach(star => {
+                star.twinkle += star.twinkleSpeed;
+                const opacity = star.opacity * (0.6 + 0.4 * Math.sin(star.twinkle));
+
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+                ctx.fillStyle = star.color === '#88ccff'
+                    ? `rgba(136, 204, 255, ${opacity})`
+                    : `rgba(255, 255, 255, ${opacity})`;
+                ctx.fill();
+
+                // Glow effect for bigger stars
+                if (star.r > 1.2) {
+                    ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.r * 2.5, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(136, 204, 255, ${opacity * 0.15})`;
+                    ctx.fill();
+                }
+
+                // Move star downward slowly
+                star.y += star.speed;
+                if (star.y > canvas.height) {
+                    star.y = 0;
+                    star.x = Math.random() * canvas.width;
+                }
+            });
+
+            requestAnimationFrame(drawStars);
+        }
+
+        initStars();
+        drawStars();
+    </script>
 </body>
 </html>
