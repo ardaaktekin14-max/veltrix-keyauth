@@ -67,6 +67,37 @@ def create_key():
         return redirect(url_for('login'))
     duration = request.form.get('duration')
     note = request.form.get('note', '')
+    custom_key = request.form.get('custom_key', '').strip()
+    
+    if custom_key:
+        key = custom_key
+    else:
+        key = generate_key()
+    
+    keys = load_keys()
+    
+    if key in keys:
+        return redirect(url_for('index'))
+    
+    if duration == 'lifetime':
+        expires = 'lifetime'
+    else:
+        days = int(duration)
+        expires = (datetime.utcnow() + timedelta(days=days)).isoformat()
+    keys[key] = {
+        'created': datetime.utcnow().isoformat(),
+        'expires': expires,
+        'note': note,
+        'hwid': None,
+        'active': True,
+        'created_by': session.get('admin_name')
+    }
+    save_keys(keys)
+    return redirect(url_for('index'))
+    if not session.get('admin'):
+        return redirect(url_for('login'))
+    duration = request.form.get('duration')
+    note = request.form.get('note', '')
     key = generate_key()
     keys = load_keys()
     if duration == 'lifetime':
